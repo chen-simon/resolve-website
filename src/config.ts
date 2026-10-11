@@ -10,11 +10,11 @@ export const site = {
 };
 
 export const mailingList = {
-  // Provider form endpoint (e.g. Buttondown / Kit). Empty = mailto fallback.
-  action: '',
+  // Provider form endpoint (MailerLite embedded form). Empty = mailto fallback.
+  action: 'https://assets.mailerlite.com/jsonp/2704078/forms/201063697414620324/subscribe',
   method: 'post',
   // Name of the email input the provider expects.
-  emailField: 'email',
-  // Extra hidden fields the provider needs, e.g. { tag: 'star-stations' }.
-  hidden: {} as Record<string, string>,
+  emailField: 'fields[email]',
+  // Extra hidden fields the provider needs.
+  hidden: { 'ml-submit': '1', anticsrf: 'true' } as Record<string, string>,
 };

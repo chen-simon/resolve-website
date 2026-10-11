@@ -3,7 +3,7 @@ title: Star Stations
 slug: star-stations
 status: teaser
 # TODO(open decision): final one-line pitch.
-tagline: Build a station. Keep it in orbit. Reach for the stars.
+tagline: Colony sim about managing your own space station.
 keyArt: ../../assets/games/star-stations/logo.png
 platforms: [steam]
 mailingList: true
