@@ -2,6 +2,7 @@
 
 export const site = {
   name: 'Resolve',
+  fullName: 'Resolve Interactive',
   url: 'https://resolveinteractive.ca',
   description: 'Resolve is a small independent game studio.',
   // TODO(open decision): confirm studio address.
