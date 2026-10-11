@@ -1,0 +1,61 @@
+---
+import { mailingList, site } from '../config';
+
+interface Props {
+  /** List / tag identifier, e.g. "star-stations" */
+  list: string;
+  heading?: string;
+}
+
+const { list, heading = 'Get updates' } = Astro.props;
+const id = `ml-${list}`;
+
+// No provider yet → mailto fallback so the form still does something.
+const hasProvider = mailingList.action !== '';
+const action = hasProvider
+  ? mailingList.action
+  : `mailto:${site.email}?subject=${encodeURIComponent(`Mailing list: ${list}`)}`;
+---
+
+<form
+  class="ml"
+  action={action}
+  method={mailingList.method}
+  enctype={hasProvider ? undefined : 'text/plain'}
+  data-list={list}
+>
+  <label class="label ml__heading" for={id}>{heading}</label>
+  <div class="ml__row">
+    <input
+      id={id}
+      class="ml__input"
+      type="email"
+      name={mailingList.emailField}
+      placeholder="you@example.com"
+      autocomplete="email"
+      required
+    />
+    {Object.entries(mailingList.hidden).map(([name, value]) => (
+      <input type="hidden" name={name} value={value} />
+    ))}
+    <button class="btn" type="submit">Sign up</button>
+  </div>
+</form>
+
+<style>
+  .ml { display: grid; gap: var(--s-3); width: 100%; max-width: 30rem; }
+  .ml__heading { opacity: 0.8; }
+  .ml__row { display: flex; gap: var(--s-3); flex-wrap: wrap; }
+  .ml__input {
+    flex: 1 1 14rem;
+    min-width: 0;
+    padding: 0.8em 1em;
+    border: 2px solid currentColor;
+    border-radius: var(--radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+  .ml__input::placeholder { color: inherit; opacity: 0.5; }
+  .ml__input:focus-visible { outline-offset: 2px; }
+</style>

@@ -1,0 +1,109 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import MailingList from './MailingList.astro';
+
+interface Props {
+  game: CollectionEntry<'games'>;
+  /** Link through to the game page (off when already on it) */
+  showLink?: boolean;
+  headingLevel?: 'h1' | 'h2';
+}
+
+const { game, showLink = true, headingLevel: H = 'h1' } = Astro.props;
+const { title, tagline, keyArt, mailingList } = game.data;
+---
+
+<section class="teaser" aria-labelledby={`teaser-${game.id}`}>
+  <div class="teaser__stars" aria-hidden="true"></div>
+  <div class="container teaser__inner">
+    <p class="label teaser__meta">
+      <span>// Resolve presents</span>
+      <span class="badge">Coming soon</span>
+    </p>
+
+    <H id={`teaser-${game.id}`} class="teaser__title">
+      <Image src={keyArt} alt={title} widths={[360, 560, 860]} sizes="(max-width: 40rem) 80vw, 28rem" class="teaser__logo" loading="eager" />
+    </H>
+
+    <p class="teaser__tagline">{tagline}</p>
+
+    {mailingList && <MailingList list={game.id} heading={`Hear first about ${title}`} />}
+
+    {showLink && (
+      <a class="label teaser__more" href={`/games/${game.id}/`}>More about {title} →</a>
+    )}
+  </div>
+</section>
+
+<style>
+  .teaser {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, #1b2246 0%, transparent 70%),
+      var(--c-space);
+    color: var(--c-space-ink);
+    --btn-shadow: var(--c-space-ink);
+  }
+
+  /* Starfield: a few tiled layers of tiny radial dots, slowly drifting */
+  .teaser__stars,
+  .teaser__stars::after {
+    position: absolute;
+    inset: -50% 0 0 0;
+    background-image:
+      radial-gradient(1px 1px at 20px 30px, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 140px 80px, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 90px 160px, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 200px 220px, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 260px 40px, #fff 50%, transparent 51%);
+    background-size: 300px 260px;
+    opacity: 0.55;
+    animation: drift 120s linear infinite;
+  }
+  .teaser__stars::after {
+    content: '';
+    inset: 0;
+    background-size: 470px 410px;
+    opacity: 0.35;
+    animation-duration: 200s;
+  }
+  @keyframes drift { to { transform: translateY(260px); } }
+
+  .teaser__inner {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: var(--s-6);
+    padding-block: var(--s-8) var(--s-9);
+  }
+
+  .teaser__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+    color: var(--c-space-soft);
+  }
+
+  .teaser__title { width: min(28rem, 80vw); }
+  .teaser__logo { width: 100%; height: auto; }
+
+  .teaser__tagline {
+    max-width: 32rem;
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .teaser :global(.ml__heading) { justify-self: center; }
+
+  .teaser__more {
+    color: var(--c-space-soft);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .teaser__more:hover { color: var(--c-accent); }
+</style>

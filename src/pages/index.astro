@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Teaser from '../components/Teaser.astro';
+
+const [teaser] = await getCollection('games', ({ data }) => data.status === 'teaser');
+---
+
+<Base>
+  {teaser && <Teaser game={teaser} />}
+
+  <section class="container intro">
+    <p class="label">// About</p>
+    <p class="intro__text">
+      Resolve is a small independent game studio making games with
+      <span class="intro__hl">care</span>, curiosity and a little chaos.
+    </p>
+    <a class="btn" href="/games/">See our games</a>
+  </section>
+</Base>
+
+<style>
+  .intro {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-5);
+    padding-block: var(--s-8) 0;
+  }
+  .intro .label { color: var(--c-ink-soft); }
+  .intro__text {
+    max-width: 40rem;
+    font-size: var(--fs-2xl);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .intro__hl {
+    display: inline-block;
+    padding-inline: 0.15em;
+    background: var(--c-accent);
+    color: var(--c-accent-ink);
+    transform: rotate(-2deg);
+  }
+</style>

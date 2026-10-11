@@ -1,0 +1,137 @@
+---
+import logo from '../assets/resolve-logo.png';
+import { site } from '../config';
+
+const path = Astro.url.pathname;
+const links = [
+  { href: '/games/', label: 'Games' },
+  { href: `mailto:${site.email}`, label: 'Contact' },
+];
+---
+
+<header class="nav">
+  <div class="container nav__inner">
+    <a
+      href="/"
+      class="nav__logo"
+      aria-label={`${site.name} — home`}
+      style={`--logo: url(${logo.src}); aspect-ratio: ${logo.width} / ${logo.height};`}
+    ></a>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="nav-links">
+      <span class="visually-hidden">Menu</span>
+      <span class="nav__bars" aria-hidden="true"></span>
+    </button>
+
+    <nav id="nav-links" class="nav__links" aria-label="Main">
+      {links.map(({ href, label }) => (
+        <a href={href} class="label nav__link" aria-current={path.startsWith(href) ? 'page' : undefined}>
+          {label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.nav__toggle');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+</script>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--c-bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    height: 4rem;
+  }
+
+  /* White PNG used as a mask, so it takes any color via currentColor */
+  .nav__logo {
+    display: block;
+    height: 1.9rem;
+    color: var(--c-ink);
+    background: currentColor;
+    mask: var(--logo) center / contain no-repeat;
+    -webkit-mask: var(--logo) center / contain no-repeat;
+    transition: color 0.2s, transform 0.25s var(--ease-bounce);
+  }
+  .nav__logo:hover { color: var(--c-accent); transform: rotate(-2deg) scale(1.04); }
+
+  .nav__links { display: flex; gap: var(--s-6); }
+
+  .nav__link {
+    position: relative;
+    text-decoration: none;
+    padding-block: var(--s-2);
+  }
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: var(--c-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s var(--ease-bounce);
+  }
+  .nav__link:hover::after,
+  .nav__link[aria-current='page']::after { transform: scaleX(1); }
+
+  .nav__toggle { display: none; }
+
+  @media (max-width: 40rem) {
+    .nav__toggle {
+      display: grid;
+      place-items: center;
+      width: 2.5rem; height: 2.5rem;
+      padding: 0;
+      border: 2px solid var(--c-ink);
+      border-radius: var(--radius);
+      background: var(--c-surface);
+      color: var(--c-ink);
+      cursor: pointer;
+    }
+    .nav__bars,
+    .nav__bars::before,
+    .nav__bars::after {
+      display: block;
+      width: 1.1rem; height: 2px;
+      background: currentColor;
+      transition: transform 0.2s;
+    }
+    .nav__bars { position: relative; }
+    .nav__bars::before, .nav__bars::after { content: ''; position: absolute; left: 0; }
+    .nav__bars::before { top: -6px; }
+    .nav__bars::after { top: 6px; }
+    .nav__toggle[aria-expanded='true'] .nav__bars { background: transparent; }
+    .nav__toggle[aria-expanded='true'] .nav__bars::before { transform: translateY(6px) rotate(45deg); }
+    .nav__toggle[aria-expanded='true'] .nav__bars::after { transform: translateY(-6px) rotate(-45deg); }
+
+    .nav__links {
+      display: none;
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      flex-direction: column;
+      gap: 0;
+      padding: var(--s-2) var(--gutter) var(--s-4);
+      background: var(--c-bg);
+      border-bottom: 1px solid var(--c-line);
+    }
+    .nav__toggle[aria-expanded='true'] + .nav__links { display: flex; }
+    .nav__link { padding-block: var(--s-3); font-size: var(--fs-sm); }
+  }
+</style>

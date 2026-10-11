@@ -1,0 +1,84 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Teaser from '../../components/Teaser.astro';
+import MailingList from '../../components/MailingList.astro';
+
+export async function getStaticPaths() {
+  const games = await getCollection('games');
+  return games.map((game) => ({ params: { slug: game.id }, props: { game } }));
+}
+
+const { game } = Astro.props;
+const { Content } = await render(game);
+const { title, tagline, status, keyArt, trailer, platforms, storeLinks, mailingList } = game.data;
+const isTeaser = status === 'teaser';
+---
+
+<Base title={title} description={tagline}>
+  {isTeaser ? (
+    <Teaser game={game} showLink={false} />
+  ) : (
+    <section class="hero">
+      <div class="container hero__inner">
+        <Image src={keyArt} alt={title} widths={[480, 960, 1440]} sizes="(max-width: 72rem) 100vw, 72rem" loading="eager" />
+      </div>
+    </section>
+  )}
+
+  <article class="container game">
+    <header class="game__head">
+      <p class="label game__meta">
+        <span>// {status}</span>
+        {platforms.length > 0 && <span>{platforms.join(' / ')}</span>}
+      </p>
+      {!isTeaser && <h1 class="game__title">{title}</h1>}
+      {!isTeaser && <p class="game__tagline">{tagline}</p>}
+    </header>
+
+    <div class="game__body">
+      <Content />
+    </div>
+
+    {trailer && (
+      <div class="game__trailer">
+        <iframe src={trailer} title={`${title} trailer`} loading="lazy" allowfullscreen></iframe>
+      </div>
+    )}
+
+    {Object.keys(storeLinks).length > 0 && (
+      <ul class="game__stores" role="list">
+        {Object.entries(storeLinks).map(([store, url]) => (
+          <li><a class="btn" href={url} rel="noopener">{store}</a></li>
+        ))}
+      </ul>
+    )}
+
+    {mailingList && !isTeaser && <MailingList list={game.id} heading={`Hear first about ${title}`} />}
+  </article>
+</Base>
+
+<style>
+  .hero { background: var(--c-space); }
+  .hero__inner { padding-block: var(--s-7); }
+
+  .game {
+    display: grid;
+    gap: var(--s-6);
+    max-width: 48rem;
+    padding-block: var(--s-8) 0;
+  }
+  .game__head { display: grid; gap: var(--s-3); }
+  .game__meta { display: flex; gap: var(--s-4); color: var(--c-ink-soft); }
+  .game__title { font-size: var(--fs-3xl); }
+  .game__tagline { font-size: var(--fs-xl); font-weight: 600; }
+
+  .game__body { font-size: var(--fs-lg); color: var(--c-ink-soft); }
+  .game__body :global(p + p) { margin-top: var(--s-4); }
+
+  .game__trailer { aspect-ratio: 16 / 9; border: 2px solid var(--c-ink); border-radius: var(--radius); overflow: hidden; }
+  .game__trailer iframe { width: 100%; height: 100%; border: 0; }
+
+  .game__stores { display: flex; flex-wrap: wrap; gap: var(--s-4); margin: 0; padding: 0; list-style: none; }
+</style>

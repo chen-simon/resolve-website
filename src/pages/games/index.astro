@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import GameCard from '../../components/GameCard.astro';
+
+const order = { released: 0, announced: 1, teaser: 2 };
+const games = (await getCollection('games')).sort(
+  (a, b) => order[a.data.status] - order[b.data.status],
+);
+---
+
+<Base title="Games" description="Games by Resolve.">
+  <section class="container games">
+    <header class="games__head">
+      <p class="label">// Games</p>
+      <h1 class="games__title">Our games</h1>
+    </header>
+
+    {games.length > 0 ? (
+      <ul class="games__grid" role="list">
+        {games.map((game) => (
+          <li><GameCard game={game} /></li>
+        ))}
+      </ul>
+    ) : (
+      <p class="games__empty">Something's cooking. Check back soon.</p>
+    )}
+  </section>
+</Base>
+
+<style>
+  .games { padding-block: var(--s-8) 0; }
+  .games__head { display: grid; gap: var(--s-3); margin-bottom: var(--s-7); }
+  .games__head .label { color: var(--c-ink-soft); }
+  .games__title { font-size: var(--fs-3xl); }
+  .games__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: var(--s-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .games__empty { color: var(--c-ink-soft); font-size: var(--fs-lg); }
+</style>

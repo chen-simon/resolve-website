@@ -1,0 +1,63 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+
+interface Props {
+  game: CollectionEntry<'games'>;
+}
+
+const { game } = Astro.props;
+const { title, tagline, status, keyArt, platforms } = game.data;
+const statusLabel = { teaser: 'Coming soon', announced: 'Announced', released: 'Out now' }[status];
+---
+
+<a class="card" href={`/games/${game.id}/`}>
+  <div class="card__art">
+    <Image src={keyArt} alt="" widths={[320, 640]} sizes="(max-width: 40rem) 90vw, 22rem" />
+    <span class="badge card__badge">{statusLabel}</span>
+  </div>
+  <div class="card__body">
+    <h2 class="card__title">{title}</h2>
+    <p class="card__tagline">{tagline}</p>
+    {platforms.length > 0 && <p class="label card__meta">{platforms.join(' / ')}</p>}
+  </div>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--c-surface);
+    border: 2px solid var(--c-ink);
+    border-radius: var(--radius);
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.25s var(--ease-bounce), box-shadow 0.25s var(--ease-bounce);
+  }
+  .card:hover {
+    transform: translate(-3px, -3px) rotate(-1deg);
+    box-shadow: var(--shadow-offset);
+  }
+  .card:hover .card__badge { animation: wiggle 0.4s ease-in-out; }
+
+  .card__art {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: var(--c-space);
+    border-bottom: 2px solid var(--c-ink);
+  }
+  .card__art :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: var(--s-5);
+    object-fit: contain;
+  }
+  .card__badge { position: absolute; top: var(--s-3); right: var(--s-3); }
+
+  .card__body { display: grid; gap: var(--s-2); padding: var(--s-5); }
+  .card__title { font-size: var(--fs-xl); }
+  .card__tagline { color: var(--c-ink-soft); }
+  .card__meta { color: var(--c-ink-soft); margin-top: var(--s-2); }
+</style>
