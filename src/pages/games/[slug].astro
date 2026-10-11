@@ -18,45 +18,47 @@ const isTeaser = status === 'teaser';
 
 <Base title={title} description={tagline}>
   {isTeaser ? (
-    <Teaser game={game} showLink={false} />
+    <Teaser game={game} showLink={false} minimal />
   ) : (
-    <section class="hero">
-      <div class="container hero__inner">
-        <Image src={keyArt} alt={title} widths={[480, 960, 1440]} sizes="(max-width: 72rem) 100vw, 72rem" loading="eager" />
-      </div>
-    </section>
+    <>
+      <section class="hero">
+        <div class="container hero__inner">
+          <Image src={keyArt} alt={title} widths={[480, 960, 1440]} sizes="(max-width: 72rem) 100vw, 72rem" loading="eager" />
+        </div>
+      </section>
+
+      <article class="container game">
+        <header class="game__head">
+          <p class="label game__meta">
+            <span>{status}</span>
+            {platforms.length > 0 && <span>{platforms.join(' / ')}</span>}
+          </p>
+          <h1 class="game__title">{title}</h1>
+          <p class="game__tagline">{tagline}</p>
+        </header>
+
+        <div class="game__body">
+          <Content />
+        </div>
+
+        {trailer && (
+          <div class="game__trailer">
+            <iframe src={trailer} title={`${title} trailer`} loading="lazy" allowfullscreen></iframe>
+          </div>
+        )}
+
+        {Object.keys(storeLinks).length > 0 && (
+          <ul class="game__stores" role="list">
+            {Object.entries(storeLinks).map(([store, url]) => (
+              <li><a class="btn" href={url} rel="noopener">{store}</a></li>
+            ))}
+          </ul>
+        )}
+
+        {mailingList && <MailingList list={game.id} heading="Save your spot for the beta" />}
+      </article>
+    </>
   )}
-
-  <article class="container game">
-    <header class="game__head">
-      <p class="label game__meta">
-        <span>{status}</span>
-        {platforms.length > 0 && <span>{platforms.join(' / ')}</span>}
-      </p>
-      {!isTeaser && <h1 class="game__title">{title}</h1>}
-      {!isTeaser && <p class="game__tagline">{tagline}</p>}
-    </header>
-
-    <div class="game__body">
-      <Content />
-    </div>
-
-    {trailer && (
-      <div class="game__trailer">
-        <iframe src={trailer} title={`${title} trailer`} loading="lazy" allowfullscreen></iframe>
-      </div>
-    )}
-
-    {Object.keys(storeLinks).length > 0 && (
-      <ul class="game__stores" role="list">
-        {Object.entries(storeLinks).map(([store, url]) => (
-          <li><a class="btn" href={url} rel="noopener">{store}</a></li>
-        ))}
-      </ul>
-    )}
-
-    {mailingList && !isTeaser && <MailingList list={game.id} heading={`Save your spot for the ${title} beta`} />}
-  </article>
 </Base>
 
 <style>

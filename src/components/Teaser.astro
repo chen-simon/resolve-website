@@ -8,13 +8,15 @@ interface Props {
   /** Link through to the game page (off when already on it) */
   showLink?: boolean;
   headingLevel?: 'h1' | 'h2';
+  /** Game page for unreleased games: small blurb, sign-up CTA is the focus */
+  minimal?: boolean;
 }
 
-const { game, showLink = true, headingLevel: H = 'h1' } = Astro.props;
+const { game, showLink = true, headingLevel: H = 'h1', minimal = false } = Astro.props;
 const { title, tagline, keyArt, mailingList } = game.data;
 ---
 
-<section class="teaser" aria-labelledby={`teaser-${game.id}`}>
+<section class:list={['teaser', { 'teaser--minimal': minimal }]} aria-labelledby={`teaser-${game.id}`}>
   <div class="teaser__stars" aria-hidden="true"></div>
   <div class="container teaser__inner">
     <p class="label teaser__meta">
@@ -28,7 +30,7 @@ const { title, tagline, keyArt, mailingList } = game.data;
 
     <p class="teaser__tagline">{tagline}</p>
 
-    {mailingList && <MailingList list={game.id} heading={`Save your spot for the ${title} beta`} />}
+    {mailingList && <MailingList list={game.id} heading="Save your spot for the beta" />}
 
     {showLink && (
       <a class="label teaser__more" href={`/games/${game.id}/`}>More about {title} →</a>
@@ -118,6 +120,31 @@ const { title, tagline, keyArt, mailingList } = game.data;
   }
 
   .teaser :global(.ml__heading) { justify-self: center; }
+
+  /* Minimal: fills the screen, blurb shrinks, sign-up heading takes over */
+  .teaser--minimal .teaser__inner {
+    min-height: calc(100svh - 10rem);
+    align-content: center;
+    gap: var(--s-5);
+    padding-block: var(--s-8);
+  }
+  /* Hero runs straight into the footer, no white strip */
+  :global(body:has(.teaser--minimal) .footer) { margin-top: 0; }
+  .teaser--minimal .teaser__title { width: min(20rem, 70vw); }
+  .teaser--minimal .teaser__tagline {
+    font-size: var(--fs-md);
+    font-weight: 400;
+    color: var(--c-space-soft);
+  }
+  .teaser--minimal :global(.ml) { max-width: 36rem; gap: var(--s-5); margin-top: var(--s-5); }
+  .teaser--minimal :global(.ml__heading) {
+    opacity: 1;
+    font-size: var(--fs-2xl);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
 
   .teaser__more {
     color: var(--c-space-soft);

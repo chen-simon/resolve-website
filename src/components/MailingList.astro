@@ -60,7 +60,7 @@ const action = hasProvider
         const data = await res.json().catch(() => ({}));
         if (!res.ok || data.success === false) throw new Error();
         row.hidden = true;
-        status.textContent = "Thanks! Check your inbox to confirm.";
+        status.textContent = "You're on the list! Thanks for signing up.";
       } catch {
         button.disabled = false;
         status.textContent = 'Something went wrong. Please try again.';
