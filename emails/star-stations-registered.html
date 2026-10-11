@@ -1,0 +1,70 @@
+<!doctype html>
+<!--
+  Star Stations registration confirmation. Sent immediately on signup.
+  Hosted in MailerLite: Automations → "Star Stations welcome" → email step 1 (Custom HTML editor).
+  Edit here, then paste the whole file into that step. {$email} and {$unsubscribe} are MailerLite merge tags.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Registration complete: Star Stations beta</title>
+</head>
+<body style="margin:0; padding:0; background:#f2f2f2;">
+  <!-- Preheader (inbox preview text) -->
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">Your spot for the Star Stations beta has been saved.</div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f2f2f2;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+
+          <!-- Header band: Resolve logo (served from the site: public/email/resolve-logo.png) -->
+          <tr>
+            <td style="background:#000000; padding:24px 32px;">
+              <a href="https://resolveinteractive.ca" style="text-decoration:none;"><img src="https://resolveinteractive.ca/email/resolve-logo.png" width="120" height="30" alt="Resolve" style="display:block; width:120px; height:auto; border:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; font-weight:700; letter-spacing:0.12em; color:#ffffff;"></a>
+            </td>
+          </tr>
+
+          <!-- Logo (served from the site: public/email/star-stations-logo.png) -->
+          <tr>
+            <td align="center" style="background:#000000; padding:8px 32px 40px;">
+              <img src="https://resolveinteractive.ca/email/star-stations-logo.png" width="240" height="199" alt="Star Stations" style="display:block; width:240px; max-width:100%; height:auto; border:0; font-family:Arial, Helvetica, sans-serif; font-size:20px; font-weight:700; color:#ffffff;">
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="background:#ffffff; padding:40px 32px; font-family:'Inter Tight', Arial, Helvetica, sans-serif; color:#0b0b0b;">
+              <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#e42127;">Registration complete</p>
+              <h1 style="margin:0 0 16px; font-size:28px; line-height:1.2; font-weight:800;">Your spot has been saved.</h1>
+              <p style="margin:0 0 24px; font-size:16px; line-height:1.6;">
+                We'll email you at <strong>{$email}</strong> when the Star Stations beta opens.
+              </p>
+              <p style="margin:0; font-size:16px; line-height:1.6;">
+                Simon from Resolve
+              </p>
+            </td>
+          </tr>
+
+          <!-- Accent rule -->
+          <tr>
+            <td style="background:#e42127; height:4px; line-height:4px; font-size:0;">&nbsp;</td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background:#000000; padding:24px 32px; font-family:'Inter Tight', Arial, Helvetica, sans-serif; font-size:12px; line-height:1.6; color:#a8a8a8;">
+              <a href="https://resolveinteractive.ca" style="color:#ffffff; text-decoration:none; font-weight:700;">resolveinteractive.ca</a><br>
+              You're getting this because you signed up for Star Stations updates.<br>
+              <a href="{$unsubscribe}" style="color:#a8a8a8; text-decoration:underline;">Unsubscribe</a>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

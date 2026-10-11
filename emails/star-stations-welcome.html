@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
-  Star Stations welcome email.
-  Hosted in MailerLite: Automations → "Star Stations welcome" → email step (Custom HTML editor).
+  Star Stations welcome email. Sent 1 day after signup.
+  Hosted in MailerLite: Automations → "Star Stations welcome" → email step 2, after a 1-day delay (Custom HTML editor).
   Edit here, then paste the whole file into that step. {$unsubscribe} is a MailerLite merge tag.
 -->
 <html lang="en">
@@ -9,21 +9,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>Thanks for signing up for Star Stations</title>
+  <title>Welcome to Star Stations</title>
 </head>
 <body style="margin:0; padding:0; background:#f2f2f2;">
   <!-- Preheader (inbox preview text) -->
-  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">You're on the Star Stations list. We'll be in touch when there's news.</div>
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">You're part of the Star Stations list. Here's what to expect.</div>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f2f2f2;">
     <tr>
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
 
-          <!-- Header band -->
+          <!-- Header band: Resolve logo (served from the site: public/email/resolve-logo.png) -->
           <tr>
-            <td style="background:#000000; padding:24px 32px; font-family:'Inter Tight', Arial, Helvetica, sans-serif; font-size:13px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#ffffff;">
-              Resolve <span style="color:#e42127;">/</span> Star Stations
+            <td style="background:#000000; padding:24px 32px;">
+              <a href="https://resolveinteractive.ca" style="text-decoration:none;"><img src="https://resolveinteractive.ca/email/resolve-logo.png" width="120" height="30" alt="Resolve" style="display:block; width:120px; height:auto; border:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; font-weight:700; letter-spacing:0.12em; color:#ffffff;"></a>
             </td>
           </tr>
 
@@ -37,12 +37,12 @@
           <!-- Body -->
           <tr>
             <td style="background:#ffffff; padding:40px 32px; font-family:'Inter Tight', Arial, Helvetica, sans-serif; color:#0b0b0b;">
-              <h1 style="margin:0 0 16px; font-size:28px; line-height:1.2; font-weight:800;">Thanks for signing up!</h1>
+              <h1 style="margin:0 0 16px; font-size:28px; line-height:1.2; font-weight:800;">Welcome aboard.</h1>
               <p style="margin:0 0 16px; font-size:16px; line-height:1.6;">
-                You're on the mailing list for <strong>Star Stations</strong>, a colony sim about managing your own space station.
+                Thanks for joining the <strong>Star Stations</strong> list. Star Stations is a colony sim about managing your own space station, and you're one of the first people following along.
               </p>
               <p style="margin:0 0 24px; font-size:16px; line-height:1.6;">
-                We'll email you when there's news to share, including when the beta opens.
+                As part of the list, you'll hear about news from development and be among the first to know when the beta opens.
               </p>
               <p style="margin:0; font-size:16px; line-height:1.6;">
                 Simon from Resolve
