@@ -9,4 +9,4 @@ platforms: [steam]
 mailingList: true
 ---
 
-Star Stations is the first game from Resolve. More to share soon — sign up below to hear first.
+You're probably here because you saw us post on social media about our upcoming space station colony sim. It's still in progress but when we are ready to invite playtesters, you can be the first to hear before anyone else.

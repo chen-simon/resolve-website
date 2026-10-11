@@ -28,7 +28,9 @@ const { title, tagline, keyArt, mailingList } = game.data;
       <Image src={keyArt} alt={title} widths={[360, 560, 860]} sizes="(max-width: 40rem) 80vw, 28rem" class="teaser__logo" loading="eager" />
     </H>
 
-    <p class="teaser__tagline">{tagline}</p>
+    {minimal && Astro.slots.has('default')
+      ? <div class="teaser__tagline"><slot /></div>
+      : <p class="teaser__tagline">{tagline}</p>}
 
     {mailingList && <MailingList list={game.id} heading="Save your spot for the beta" />}
 
@@ -132,7 +134,9 @@ const { title, tagline, keyArt, mailingList } = game.data;
   :global(body:has(.teaser--minimal) .footer) { margin-top: 0; }
   .teaser--minimal .teaser__title { width: min(20rem, 70vw); }
   .teaser--minimal .teaser__tagline {
+    max-width: 34rem;
     font-size: var(--fs-md);
+    line-height: 1.6;
     font-weight: 400;
     color: var(--c-space-soft);
   }

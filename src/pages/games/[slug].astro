@@ -18,7 +18,7 @@ const isTeaser = status === 'teaser';
 
 <Base title={title} description={tagline}>
   {isTeaser ? (
-    <Teaser game={game} showLink={false} minimal />
+    <Teaser game={game} showLink={false} minimal><Content /></Teaser>
   ) : (
     <>
       <section class="hero">
