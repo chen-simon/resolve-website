@@ -5,7 +5,7 @@ import { site } from '../config';
 const path = Astro.url.pathname;
 const links = [
   { href: '/games/', label: 'Games' },
-  { href: `mailto:${site.email}`, label: 'Contact' },
+  { href: '/contact/', label: 'Contact' },
 ];
 ---
 
@@ -46,9 +46,9 @@ const links = [
     position: sticky;
     top: 0;
     z-index: 10;
-    background: color-mix(in srgb, var(--c-bg) 88%, transparent);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--c-line);
+    background: var(--c-space);
+    color: var(--c-space-ink);
+    border-bottom: 3px solid var(--c-accent);
   }
 
   .nav__inner {
@@ -63,18 +63,19 @@ const links = [
   .nav__logo {
     display: block;
     height: 1.9rem;
-    color: var(--c-ink);
+    color: var(--c-space-ink);
     background: currentColor;
     mask: var(--logo) center / contain no-repeat;
     -webkit-mask: var(--logo) center / contain no-repeat;
-    transition: color 0.2s, transform 0.25s var(--ease-bounce);
+    transition: color 0.2s;
   }
-  .nav__logo:hover { color: var(--c-accent); transform: rotate(-2deg) scale(1.04); }
+  .nav__logo:hover { color: var(--c-accent); }
 
   .nav__links { display: flex; gap: var(--s-6); }
 
   .nav__link {
     position: relative;
+    color: var(--c-space-ink);
     text-decoration: none;
     padding-block: var(--s-2);
   }
@@ -99,10 +100,10 @@ const links = [
       place-items: center;
       width: 2.5rem; height: 2.5rem;
       padding: 0;
-      border: 2px solid var(--c-ink);
+      border: 2px solid var(--c-space-soft);
       border-radius: var(--radius);
-      background: var(--c-surface);
-      color: var(--c-ink);
+      background: transparent;
+      color: var(--c-space-ink);
       cursor: pointer;
     }
     .nav__bars,
@@ -128,8 +129,8 @@ const links = [
       flex-direction: column;
       gap: 0;
       padding: var(--s-2) var(--gutter) var(--s-4);
-      background: var(--c-bg);
-      border-bottom: 1px solid var(--c-line);
+      background: var(--c-space);
+      border-bottom: 3px solid var(--c-accent);
     }
     .nav__toggle[aria-expanded='true'] + .nav__links { display: flex; }
     .nav__link { padding-block: var(--s-3); font-size: var(--fs-sm); }

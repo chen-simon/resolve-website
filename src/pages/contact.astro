@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../config';
+---
+
+<Base title="Contact" description={`Get in touch with ${site.name}.`}>
+  <section class="container contact">
+    <p class="label">// Contact</p>
+    <h1 class="contact__title">Say hello</h1>
+    <p class="contact__text">
+      Press, collaborations, bug reports, or just to tell us what you think — email is the best way to reach us.
+    </p>
+    <div class="contact__row">
+      <a class="contact__email" href={`mailto:${site.email}`}>{site.email}</a>
+      <button class="btn contact__copy" type="button" data-email={site.email}>Copy</button>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.contact__copy');
+  btn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(btn.dataset.email ?? '');
+      btn.textContent = 'Copied';
+      setTimeout(() => (btn.textContent = 'Copy'), 1500);
+    } catch {
+      // Clipboard blocked; the address is still visible and selectable.
+    }
+  });
+</script>
+
+<style>
+  .contact {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+    padding-block: var(--s-8) 0;
+  }
+  .contact .label { color: var(--c-ink-soft); }
+  .contact__title { font-size: var(--fs-3xl); }
+  .contact__text {
+    max-width: 36rem;
+    color: var(--c-ink-soft);
+    font-size: var(--fs-lg);
+  }
+  .contact__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-4);
+    margin-top: var(--s-4);
+  }
+  .contact__email {
+    font-weight: 700;
+    font-size: var(--fs-xl);
+    overflow-wrap: anywhere;
+    text-decoration-color: var(--c-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  .contact__email:hover { color: var(--c-accent); }
+</style>

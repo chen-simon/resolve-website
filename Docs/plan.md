@@ -74,7 +74,7 @@ The teaser on Home = the game with `status: teaser`.
 ## Design direction
 
 - **Base:** light theme. NASA/FromSoft-like restraint — strong grid, generous whitespace, grotesk headings + monospace labels/metadata.
-- **Accents:** Aggro Crab–style fun on top — one bold accent color, playful hover states (tilt, wiggle, offset shadows), occasional sticker/badge elements.
+- **Accents:** Aggro Crab–style fun on top — one bold accent color, playful hover states (offset shadows, underlines — no tilting text), occasional sticker/badge elements.
 - **Nav:** simple top bar like Team Hami / Aggro Crab — logo left, links right, collapses to menu on mobile.
 - **Fonts:** Inter Tight (headings/body) + JetBrains Mono (labels, metadata), self-hosted.
 - **Resolve logo:** white-on-transparent, single color, bold wordmark in a rounded box. On the light nav it must render dark: use it as a CSS `mask-image` filled with `currentColor`, so one file can be any color (ink on light, white on dark band, accent on hover). An SVG version would be sharper and smaller; PNG works fine meanwhile.
