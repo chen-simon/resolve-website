@@ -18,7 +18,7 @@ const { title, tagline, keyArt, mailingList } = game.data;
   <div class="teaser__stars" aria-hidden="true"></div>
   <div class="container teaser__inner">
     <p class="label teaser__meta">
-      <span>// Resolve presents</span>
+      <span>Resolve presents</span>
       <span class="badge">Coming soon</span>
     </p>
 
@@ -28,7 +28,7 @@ const { title, tagline, keyArt, mailingList } = game.data;
 
     <p class="teaser__tagline">{tagline}</p>
 
-    {mailingList && <MailingList list={game.id} heading={`Hear first about ${title}`} />}
+    {mailingList && <MailingList list={game.id} heading={`Save your spot for the ${title} beta`} />}
 
     {showLink && (
       <a class="label teaser__more" href={`/games/${game.id}/`}>More about {title} →</a>
@@ -36,15 +36,30 @@ const { title, tagline, keyArt, mailingList } = game.data;
   </div>
 </section>
 
+<script>
+  const teasers = document.querySelectorAll<HTMLElement>('.teaser');
+  if (teasers.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let queued = false;
+    const update = () => {
+      queued = false;
+      teasers.forEach((t) => t.style.setProperty('--scroll', String(Math.max(0, -t.getBoundingClientRect().top))));
+    };
+    addEventListener('scroll', () => {
+      if (!queued) { queued = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+  }
+</script>
+
 <style>
   .teaser {
     position: relative;
     overflow: hidden;
+    /* Star Stations gets its own deep-space navy, not the site's flat black */
     background:
       radial-gradient(ellipse 80% 60% at 50% 0%, #1b2246 0%, transparent 70%),
-      var(--c-space);
+      #0c0f1d;
     color: var(--c-space-ink);
-    --btn-shadow: var(--c-space-ink);
   }
 
   /* Starfield: a few tiled layers of tiny radial dots, slowly drifting */
@@ -53,14 +68,16 @@ const { title, tagline, keyArt, mailingList } = game.data;
     position: absolute;
     inset: -50% 0 0 0;
     background-image:
-      radial-gradient(1px 1px at 20px 30px, #fff 50%, transparent 51%),
-      radial-gradient(1px 1px at 140px 80px, #fff 50%, transparent 51%),
-      radial-gradient(1.5px 1.5px at 90px 160px, #fff 50%, transparent 51%),
-      radial-gradient(1px 1px at 200px 220px, #fff 50%, transparent 51%),
-      radial-gradient(1px 1px at 260px 40px, #fff 50%, transparent 51%);
+      radial-gradient(2px 2px at 20px 30px, #fff 50%, transparent 51%),
+      radial-gradient(2px 2px at 140px 80px, #fff 50%, transparent 51%),
+      radial-gradient(3px 3px at 90px 160px, #fff 50%, transparent 51%),
+      radial-gradient(2px 2px at 200px 220px, #fff 50%, transparent 51%),
+      radial-gradient(2.5px 2.5px at 260px 40px, #fff 50%, transparent 51%);
     background-size: 300px 260px;
     opacity: 0.55;
     animation: drift 120s linear infinite;
+    /* Scroll parallax via `translate`, so it stacks with the drift `transform` */
+    translate: 0 calc(var(--scroll, 0) * 0.25px);
   }
   .teaser__stars::after {
     content: '';
@@ -68,6 +85,8 @@ const { title, tagline, keyArt, mailingList } = game.data;
     background-size: 470px 410px;
     opacity: 0.35;
     animation-duration: 200s;
+    /* Nested in the near layer, so this adds on top: far stars lag more */
+    translate: 0 calc(var(--scroll, 0) * 0.2px);
   }
   @keyframes drift { to { transform: translateY(260px); } }
 

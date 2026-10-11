@@ -25,7 +25,7 @@ const links = [
 
     <nav id="nav-links" class="nav__links" aria-label="Main">
       {links.map(({ href, label }) => (
-        <a href={href} class="label nav__link" aria-current={path.startsWith(href) ? 'page' : undefined}>
+        <a href={href} class="nav__link" aria-current={path.startsWith(href) ? 'page' : undefined}>
           {label}
         </a>
       ))}
@@ -75,6 +75,7 @@ const links = [
   .nav__link {
     position: relative;
     color: var(--c-space-ink);
+    font-weight: 600;
     text-decoration: none;
     padding-block: var(--s-2);
   }
@@ -86,7 +87,7 @@ const links = [
     background: var(--c-accent);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.25s var(--ease-bounce);
+    transition: transform 0.25s var(--ease-out);
   }
   .nav__link:hover::after,
   .nav__link[aria-current='page']::after { transform: scaleX(1); }

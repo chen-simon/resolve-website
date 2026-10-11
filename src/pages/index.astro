@@ -10,10 +10,10 @@ const [teaser] = await getCollection('games', ({ data }) => data.status === 'tea
   {teaser && <Teaser game={teaser} />}
 
   <section class="container intro">
-    <p class="label">// About</p>
+    <p class="label">About</p>
     <p class="intro__text">
       Resolve is a small independent game studio making games with
-      <span class="intro__hl">care</span>, curiosity and a little chaos.
+      {' '}<span class="intro__hl">care</span>, curiosity and a little chaos.
     </p>
     <a class="btn" href="/games/">See our games</a>
   </section>
@@ -35,10 +35,5 @@ const [teaser] = await getCollection('games', ({ data }) => data.status === 'tea
     letter-spacing: -0.02em;
     text-wrap: balance;
   }
-  .intro__hl {
-    display: inline-block;
-    padding-inline: 0.15em;
-    background: var(--c-accent);
-    color: var(--c-accent-ink);
-  }
+  .intro__hl { color: var(--c-accent); }
 </style>

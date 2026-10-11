@@ -73,13 +73,13 @@ The teaser on Home = the game with `status: teaser`.
 
 ## Design direction
 
-- **Base:** light theme. NASA/FromSoft-like restraint — strong grid, generous whitespace, grotesk headings + monospace labels/metadata.
-- **Accents:** Aggro Crab–style fun on top — one bold accent color, playful hover states (offset shadows, underlines — no tilting text), occasional sticker/badge elements.
+- **Base:** nasa.gov-style — white pages, black bands (nav, hero, footer), square corners, strong grid, generous whitespace, heavy grotesk headings + small uppercase labels.
+- **Accents:** one red accent (buttons, badges, underlines). Restrained hovers: darker red, red underlines, slight image zoom — no tilting text, no offset shadows.
 - **Nav:** simple top bar like Team Hami / Aggro Crab — logo left, links right, collapses to menu on mobile.
-- **Fonts:** Inter Tight (headings/body) + JetBrains Mono (labels, metadata), self-hosted.
+- **Fonts:** Inter Tight (headings, body, labels), self-hosted.
 - **Resolve logo:** white-on-transparent, single color, bold wordmark in a rounded box. On the light nav it must render dark: use it as a CSS `mask-image` filled with `currentColor`, so one file can be any color (ink on light, white on dark band, accent on hover). An SVG version would be sharper and smaller; PNG works fine meanwhile.
-- **Star Stations logo:** white-on-transparent, monochrome, orbit/arrow mark — fits the NASA vibe. Light site needs a **dark "space" band** behind the teaser hero (dark navy/near-black, maybe subtle starfield). Rest of site stays light. Logo PNG has lots of padding — crop when moved.
-- **Contact:** email link in footer only (no socials yet). Mailing list only on Star Stations (teaser hero + game page).
+- **Star Stations logo:** white-on-transparent, monochrome, orbit/arrow mark — fits the NASA vibe. Light site needs a **dark "space" band** behind the teaser hero (black, subtle starfield). Rest of site stays light. Logo PNG has lots of padding — crop when moved.
+- **Contact:** `/contact/` page + email link in footer (no socials yet). Mailing list only on Star Stations (teaser hero + game page).
 
 ## Mailing list seam
 

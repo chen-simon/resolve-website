@@ -28,22 +28,14 @@ const statusLabel = { teaser: 'Coming soon', announced: 'Announced', released: '
     display: flex;
     flex-direction: column;
     background: var(--c-surface);
-    border: 2px solid var(--c-ink);
-    border-radius: var(--radius);
-    overflow: hidden;
     text-decoration: none;
-    transition: transform 0.25s var(--ease-bounce), box-shadow 0.25s var(--ease-bounce);
-  }
-  .card:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: var(--shadow-offset);
   }
 
   .card__art {
     position: relative;
     aspect-ratio: 16 / 10;
+    overflow: hidden;
     background: var(--c-space);
-    border-bottom: 2px solid var(--c-ink);
   }
   .card__art :global(img) {
     position: absolute;
@@ -52,11 +44,19 @@ const statusLabel = { teaser: 'Coming soon', announced: 'Announced', released: '
     height: 100%;
     padding: var(--s-5);
     object-fit: contain;
+    transition: transform 0.5s var(--ease-out);
   }
+  .card:hover .card__art :global(img) { transform: scale(1.05); }
   .card__badge { position: absolute; top: var(--s-3); right: var(--s-3); }
 
   .card__body { display: grid; gap: var(--s-2); padding: var(--s-5); }
-  .card__title { font-size: var(--fs-xl); }
+  .card__title {
+    font-size: var(--fs-xl);
+    text-decoration: underline 2px transparent;
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.2s;
+  }
+  .card:hover .card__title { text-decoration-color: var(--c-accent); }
   .card__tagline { color: var(--c-ink-soft); }
   .card__meta { color: var(--c-ink-soft); margin-top: var(--s-2); }
 </style>
