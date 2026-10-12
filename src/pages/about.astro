@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../config';
+---
+
+<Base title="About" description={`${site.name} is a one-person indie game studio run by Simon Chen.`}>
+  <section class="container about">
+    <p class="label">About</p>
+    <h1 class="about__title">PC games for PC gamers</h1>
+    <p class="about__text">
+      {site.fullName} is a small independent studio making PC games. Right now the team is just one person.
+    </p>
+
+    <div class="about__person">
+      <p class="label">Team</p>
+      <h2 class="about__name"><a href="https://github.com/chen-simon" target="_blank" rel="noopener">Simon Chen</a></h2>
+      <p class="about__role">Everything, for now</p>
+      <p class="about__bio">
+        Simon is also the director of <a href="https://teamhami.com" target="_blank" rel="noopener">Team Hami</a>, a Toronto indie studio,
+        where he was previously project lead on <em>Bakeaway</em>. Resolve is where he's working on his own projects,
+        starting with Star Stations.
+      </p>
+    </div>
+
+    <a class="btn" href="/contact/">Get in touch</a>
+  </section>
+</Base>
+
+<style>
+  .about {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+    padding-block: var(--s-8) 0;
+  }
+  .about .label { color: var(--c-ink-soft); }
+  .about__title { font-size: var(--fs-3xl); }
+  .about__text {
+    max-width: 36rem;
+    color: var(--c-ink-soft);
+    font-size: var(--fs-lg);
+  }
+  .about__person {
+    display: grid;
+    gap: var(--s-2);
+    max-width: 36rem;
+    margin-block: var(--s-6) var(--s-4);
+    padding-top: var(--s-5);
+    border-top: 2px solid var(--c-ink);
+  }
+  .about__name { font-size: var(--fs-xl); }
+  .about__name a {
+    text-decoration-color: var(--c-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  .about__name a:hover { color: var(--c-accent); }
+  .about__role {
+    color: var(--c-accent);
+    font-weight: 700;
+  }
+  .about__bio a {
+    font-weight: 700;
+    text-decoration-color: var(--c-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  .about__bio a:hover { color: var(--c-accent); }
+</style>
