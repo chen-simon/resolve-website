@@ -1,0 +1,11 @@
+// Static site: Cloudflare serves the built `dist/` as-is, no Worker code.
+// Having this file stops `wrangler deploy` from auto-configuring the project
+// (which installs the Astro SSR adapter and breaks the static build).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "resolve-website",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
