@@ -1,0 +1,12 @@
+{
+  "width": 3200,
+  "height": 1600,
+  "layers": [
+    { "name": "sky", "file": "sky.png", "x": 0, "y": 0, "w": 3200, "h": 1600, "depth": 138.7 },
+    { "name": "asteroids_far", "file": "asteroids_far.png", "x": 0, "y": 62, "w": 2954, "h": 909, "depth": 76.5 },
+    { "name": "asteroids_near", "file": "asteroids_near.png", "x": 94, "y": 344, "w": 1174, "h": 635, "depth": 44.5 },
+    { "name": "satellite", "file": "satellite.png", "x": 696, "y": 427, "w": 311, "h": 163, "depth": 27.0 },
+    { "name": "sun", "file": "sun.png", "x": 0, "y": 0, "w": 3200, "h": 1600, "depth": 13.9 },
+    { "name": "crew", "file": "crew.png", "x": 875, "y": 566, "w": 1390, "h": 764, "depth": 17.0 }
+  ]
+}

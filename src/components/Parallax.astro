@@ -1,0 +1,242 @@
+---
+/**
+ * Layered key-art scene, driven by a game's `parallax/layers.json`
+ * (exported alongside the layer PNGs). Renders nothing if the game has none.
+ *
+ * Layout: the first (deepest) layer is the backdrop and covers the whole
+ * parent section. The rest sit on a 2:1 "stage" pinned to the section's
+ * bottom edge, with its bottom sliver cropped off. A spacer in normal flow
+ * reserves room below the content so the focal art isn't covered by text.
+ *
+ * The parent must be `position: relative; overflow: hidden`, and its content
+ * needs `position: relative` to stack above the scene.
+ */
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Layer { name: string; file: string; x: number; y: number; w: number; h: number; depth: number }
+interface Manifest { width: number; height: number; layers: Layer[] }
+
+interface Props {
+  game: string;
+  /** Fraction of the stage height left visible, from the top (crops the bottom) */
+  crop?: number;
+  /** Fraction of stage height where the art we must keep clear of text begins */
+  focusTop?: number;
+}
+
+const { game, crop = 0.86, focusTop = 0.33 } = Astro.props;
+
+const manifests = import.meta.glob<Manifest>('../assets/games/*/parallax/layers.json', { eager: true, import: 'default' });
+const images = import.meta.glob<ImageMetadata>('../assets/games/*/parallax/*.{png,jpg,jpeg,webp}', { eager: true, import: 'default' });
+
+const dir = `../assets/games/${game}/parallax/`;
+const manifest = manifests[`${dir}layers.json`];
+
+// Narrowest the stage gets; below this it overflows and is cropped at the sides.
+const MIN_STAGE = '50rem';
+
+const toLayer = (l: Layer) => {
+  const src = images[dir + l.file];
+  if (!src) throw new Error(`Parallax: ${dir}${l.file} listed in layers.json but not found`);
+  return { ...l, src };
+};
+
+let backdrop: (ReturnType<typeof toLayer> & { style: string }) | undefined;
+type Drawn = ReturnType<typeof toLayer> & { style: string; sizes: string; widths: number[]; fullFrame: boolean; solid?: string };
+let layers: Drawn[] = [];
+
+if (manifest) {
+  // Paint in file order (the exporter's stacking), first layer = backdrop
+  const [first, ...rest] = manifest.layers.map(toLayer);
+  const nearest = Math.min(...manifest.layers.map((l) => l.depth));
+  // k: scroll lag (far layers trail the page). m: pointer sway (near layers move most).
+  const k = (depth: number) => (0.35 * (1 - nearest / depth)).toFixed(3);
+  const m = (depth: number) => (nearest / depth).toFixed(3);
+  const pct = (n: number, of: number) => `${((n / of) * 100).toFixed(3)}%`;
+
+  backdrop = { ...first, style: `--k:${k(first.depth)};--m:${m(first.depth)}` };
+  const placed = rest.map((l) => {
+    const f = l.w / manifest.width;
+    return {
+      ...l,
+      style: `left:${pct(l.x, manifest.width)};top:${pct(l.y, manifest.height)};width:${pct(l.w, manifest.width)};--k:${k(l.depth)};--m:${m(l.depth)}`,
+      sizes: `(max-width: ${MIN_STAGE}) calc(${MIN_STAGE} * ${f.toFixed(3)}), ${(f * 100).toFixed(1)}vw`,
+      // Full-frame layers (e.g. a glow) end in a hard line at the stage top
+      fullFrame: l.y === 0 && l.h === manifest.height,
+      widths: [...new Set([0.25, 0.4, 0.6, 0.8, 1].map((r) => Math.round(l.w * r)).filter((w) => w >= 64))],
+    };
+  });
+  // A layer painted *under* something farther away (e.g. the sun under the
+  // crew, so its glow doesn't wash them out) gets its opaque parts redrawn on
+  // top, so solid shapes still occlude by depth.
+  const occluders = placed.filter((l, i) => placed.slice(i + 1).some((later) => later.depth > l.depth));
+  const solids = await Promise.all(occluders.map(async (l) => {
+    // Reuse one of the layer's existing srcset widths so it's a cache hit
+    const { src } = await getImage({ src: l.src, width: l.widths.at(-2) ?? l.w, format: 'webp' });
+    return { ...l, solid: src };
+  }));
+  layers = [...placed, ...solids];
+}
+
+const sceneVars = `--crop:${crop};--focus:${focusTop};--min-stage:${MIN_STAGE}`;
+---
+
+{manifest && backdrop && (
+  <div class="scene" style={sceneVars} aria-hidden="true">
+    <div class="scene__layers">
+      <div class="scene__stage">
+        {/* Backdrop at stage scale, stacked upward with mirrored copies so it
+            fills a tall section without being zoomed in */}
+        <div class="scene__backdrop" style={backdrop.style}>
+          {[0, 1, 2, 3].map((i) => (
+            <Image
+              src={backdrop.src}
+              alt=""
+              widths={[1600, 2400, backdrop.w]}
+              sizes={`(max-width: ${MIN_STAGE}) ${MIN_STAGE}, 100vw`}
+              class:list={['scene__sky', { 'scene__sky--flip': i % 2 === 1 }]}
+              loading="eager"
+              decoding="async"
+            />
+          ))}
+        </div>
+        {layers.map((l) => l.solid ? (
+          <div
+            class="scene__layer scene__layer--solid"
+            style={`${l.style};aspect-ratio:${l.w}/${l.h};--src:url(${l.solid})`}
+          ></div>
+        ) : (
+          <Image
+            src={l.src}
+            alt=""
+            widths={l.widths}
+            sizes={l.sizes}
+            class:list={['scene__layer', { 'scene__layer--fade-top': l.fullFrame }]}
+            data-layer={l.name}
+            style={l.style}
+            loading="eager"
+            decoding="async"
+          />
+        ))}
+      </div>
+    </div>
+    <div class="scene__spacer"></div>
+  </div>
+)}
+
+<script>
+  const scenes = [...document.querySelectorAll<HTMLElement>('.scene')];
+  const motionOk = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (scenes.length && motionOk) {
+    // Scroll: how far the scene's section has scrolled past the viewport top
+    let scrollQueued = false;
+    const onScroll = () => {
+      scrollQueued = false;
+      for (const s of scenes) {
+        const top = s.parentElement!.getBoundingClientRect().top;
+        s.style.setProperty('--scroll', String(Math.max(0, -top)));
+      }
+    };
+    addEventListener('scroll', () => {
+      if (!scrollQueued) { scrollQueued = true; requestAnimationFrame(onScroll); }
+    }, { passive: true });
+    onScroll();
+
+    // Pointer: eased sway, mouse/trackpad only
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      const AMP_X = 22, AMP_Y = 12;
+      let tx = 0, ty = 0, x = 0, y = 0, running = false;
+      const tick = () => {
+        x += (tx - x) * 0.06;
+        y += (ty - y) * 0.06;
+        for (const s of scenes) {
+          s.style.setProperty('--px', x.toFixed(2));
+          s.style.setProperty('--py', y.toFixed(2));
+        }
+        running = Math.abs(tx - x) > 0.05 || Math.abs(ty - y) > 0.05;
+        if (running) requestAnimationFrame(tick);
+      };
+      addEventListener('pointermove', (e) => {
+        tx = (e.clientX / innerWidth - 0.5) * 2 * AMP_X;
+        ty = (e.clientY / innerHeight - 0.5) * 2 * AMP_Y;
+        if (!running) { running = true; requestAnimationFrame(tick); }
+      }, { passive: true });
+    }
+  }
+</script>
+
+<style>
+  .scene__layers {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* Every layer: scroll lag (--k) + pointer sway (--m). `transform` is
+     reserved for this, so idle animations use `translate`/`rotate`. */
+  .scene__backdrop,
+  .scene__layer {
+    position: absolute;
+    display: block;
+    max-width: none;
+    transform: translate3d(
+      calc(var(--px, 0) * var(--m) * -1px),
+      calc(var(--scroll, 0) * var(--k) * 1px - var(--py, 0) * var(--m) * 1px),
+      0
+    );
+    will-change: transform;
+  }
+
+  /* Bottom copy lines up with the stage; the rest climb above it */
+  .scene__backdrop {
+    left: -2%;
+    bottom: 0;
+    width: 104%;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .scene__sky { display: block; width: 100%; height: auto; }
+  .scene__sky--flip { scale: 1 -1; }
+
+  .scene__stage {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: max(100%, var(--min-stage));
+    aspect-ratio: 2 / 1;
+    translate: -50% calc((1 - var(--crop)) * 100%);
+  }
+  .scene__layer { height: auto; }
+  .scene__layer--fade-top { mask-image: linear-gradient(transparent, #000 40%); }
+  /* Opaque parts only: masking with the image's own alpha 6 more times
+     gives alpha^7, so glow (~0.5) fades to ~0 while the solid disc stays 1 */
+  .scene__layer--solid {
+    background: var(--src) center / 100% 100%;
+    --m6: var(--src), var(--src), var(--src), var(--src), var(--src), var(--src);
+    -webkit-mask: var(--m6);
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-composite: source-in;
+    mask: var(--m6);
+    mask-size: 100% 100%;
+    mask-composite: intersect;
+  }
+
+  /* Reserves the stage's focal band (focusTop → crop) below the content.
+     Padding % resolves against the section's width, same as the stage. */
+  .scene__spacer {
+    padding-top: calc(max(100%, var(--min-stage)) * 0.5 * (var(--crop) - var(--focus)));
+  }
+
+  /* Idle drift so the scene breathes even when nothing moves */
+  @media (prefers-reduced-motion: no-preference) {
+    .scene__layer[data-layer='satellite'] { animation: bob 7s ease-in-out infinite alternate; }
+    .scene__layer[data-layer='asteroids_near'] { animation: bob 11s ease-in-out infinite alternate-reverse; }
+    .scene__layer[data-layer='asteroids_far'] { animation: bob 16s ease-in-out infinite alternate; }
+  }
+  @keyframes bob {
+    from { translate: 0 -0.6%; rotate: -0.6deg; }
+    to { translate: 0 0.6%; rotate: 0.6deg; }
+  }
+</style>

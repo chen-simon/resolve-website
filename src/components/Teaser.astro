@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import MailingList from './MailingList.astro';
+import Parallax from './Parallax.astro';
 
 interface Props {
   game: CollectionEntry<'games'>;
@@ -17,7 +18,6 @@ const { title, tagline, keyArt, mailingList } = game.data;
 ---
 
 <section class:list={['teaser', { 'teaser--minimal': minimal }]} aria-labelledby={`teaser-${game.id}`}>
-  <div class="teaser__stars" aria-hidden="true"></div>
   <div class="container teaser__inner">
     <p class="label teaser__meta">
       <span>Resolve presents</span>
@@ -38,26 +38,14 @@ const { title, tagline, keyArt, mailingList } = game.data;
       <a class="label teaser__more" href={`/games/${game.id}/`}>More about {title} →</a>
     )}
   </div>
+  <Parallax game={game.id} />
 </section>
-
-<script>
-  const teasers = document.querySelectorAll<HTMLElement>('.teaser');
-  if (teasers.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    let queued = false;
-    const update = () => {
-      queued = false;
-      teasers.forEach((t) => t.style.setProperty('--scroll', String(Math.max(0, -t.getBoundingClientRect().top))));
-    };
-    addEventListener('scroll', () => {
-      if (!queued) { queued = true; requestAnimationFrame(update); }
-    }, { passive: true });
-    update();
-  }
-</script>
 
 <style>
   .teaser {
     position: relative;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     /* Star Stations gets its own deep-space navy, not the site's flat black */
     background:
@@ -66,42 +54,18 @@ const { title, tagline, keyArt, mailingList } = game.data;
     color: var(--c-space-ink);
   }
 
-  /* Starfield: a few tiled layers of tiny radial dots, slowly drifting */
-  .teaser__stars,
-  .teaser__stars::after {
-    position: absolute;
-    inset: -50% 0 0 0;
-    background-image:
-      radial-gradient(2px 2px at 20px 30px, #fff 50%, transparent 51%),
-      radial-gradient(2px 2px at 140px 80px, #fff 50%, transparent 51%),
-      radial-gradient(3px 3px at 90px 160px, #fff 50%, transparent 51%),
-      radial-gradient(2px 2px at 200px 220px, #fff 50%, transparent 51%),
-      radial-gradient(2.5px 2.5px at 260px 40px, #fff 50%, transparent 51%);
-    background-size: 300px 260px;
-    opacity: 0.55;
-    animation: drift 120s linear infinite;
-    /* Scroll parallax via `translate`, so it stacks with the drift `transform` */
-    translate: 0 calc(var(--scroll, 0) * 0.25px);
-  }
-  .teaser__stars::after {
-    content: '';
-    inset: 0;
-    background-size: 470px 410px;
-    opacity: 0.35;
-    animation-duration: 200s;
-    /* Nested in the near layer, so this adds on top: far stars lag more */
-    translate: 0 calc(var(--scroll, 0) * 0.2px);
-  }
-  @keyframes drift { to { transform: translateY(260px); } }
-
   .teaser__inner {
     position: relative;
+    z-index: 1;
+    width: 100%;
     display: grid;
     justify-items: center;
     text-align: center;
     gap: var(--s-6);
     padding-block: var(--s-8) var(--s-9);
   }
+  /* With key art, the scene's spacer supplies the bottom room */
+  .teaser:has(:global(.scene)) .teaser__inner { padding-bottom: var(--s-5); }
 
   .teaser__meta {
     display: flex;
@@ -122,13 +86,16 @@ const { title, tagline, keyArt, mailingList } = game.data;
   }
 
   .teaser :global(.ml__heading) { justify-self: center; }
+  /* Keep the field solid over the key art drifting behind it */
+  .teaser :global(.ml__input) { background: rgb(12 15 29 / 0.75); backdrop-filter: blur(6px); }
 
   /* Minimal: fills the screen, blurb shrinks, sign-up heading takes over */
+  .teaser--minimal { min-height: calc(100svh - 4rem); }
   .teaser--minimal .teaser__inner {
-    min-height: calc(100svh - 10rem);
+    flex: 1;
     align-content: center;
     gap: var(--s-5);
-    padding-block: var(--s-8);
+    padding-top: var(--s-8);
   }
   /* Hero runs straight into the footer, no white strip */
   :global(body:has(.teaser--minimal) .footer) { margin-top: 0; }
